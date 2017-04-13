@@ -24,7 +24,7 @@ $ yarn add v-click-outside
 ## Use
 
 ```js
-import Vue from 'vue
+import Vue from 'vue'
 import vClickOutside from 'v-click-outside'
 
 Vue.use(vClickOutside)
