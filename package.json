@@ -49,5 +49,8 @@
     "roots": [
       "test/"
     ]
+  },
+  "engines": {
+    "node": ">=6"
   }
 }
