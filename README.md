@@ -8,7 +8,7 @@
 [![bitHound Code](https://www.bithound.io/github/ndelvalle/v-click-outside/badges/code.svg)](https://www.bithound.io/github/ndelvalle/v-click-outside)
 
 
-Vue directive to react on clicks outside of an element. Great for closing dialogues, drawers menus among other things.
+Vue directive to react on clicks outside of an element without stopping the event propagation. Great for closing dialogues, drawers menus among other things.
 
 
 
@@ -35,8 +35,6 @@ Vue.use(vClickOutside)
 ```js
 <script>
   export default {
-    name: 'Component',
-
     methods: {
       onClickOutside () {
         console.log('Clicked...');
