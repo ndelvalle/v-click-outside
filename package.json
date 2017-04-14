@@ -1,11 +1,14 @@
 {
   "name": "v-click-outside",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Vue directive to react on clicks outside the current element",
   "main": "dist/v-click-outside.min.js",
   "scripts": {
+    "test": "jest --coverage",
+    "cover": "open coverage/lcov-report/index.html",
     "build": "rollup -c",
     "lint": "standard",
+    "lint:fix": "standard --fix",
     "release": "np"
   },
   "repository": {
@@ -19,7 +22,9 @@
   },
   "homepage": "https://github.com/ndelvalle/v-click-outside#readme",
   "devDependencies": {
+    "babel-jest": "^19.0.0",
     "babel-preset-es2015-rollup": "^3.0.0",
+    "jest": "^19.0.2",
     "np": "^2.13.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
@@ -27,5 +32,22 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^1.0.1",
     "standard": "^10.0.1"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    },
+    "collectCoverageFrom": [
+      "lib/**"
+    ],
+    "roots": [
+      "test/"
+    ]
   }
 }
