@@ -37,7 +37,7 @@ Vue.use(vClickOutside)
   export default {
     methods: {
       onClickOutside (event) {
-        console.log('Clicked outside. Event: ', event);
+        console.log('Clicked outside. Event: ', event)
       }
     }
   };
