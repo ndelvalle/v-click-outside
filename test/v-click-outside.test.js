@@ -42,6 +42,7 @@ describe('v-click-outside -> directive', () => {
   describe('onEvent', () => {
     const message = 'it calls the callback if the element is not the same and does ' +
                     'not contains the event target'
+
     it(message, () => {
       const event = { target: a }
       const onEventBound = directive.onEvent.bind({ el: div })
