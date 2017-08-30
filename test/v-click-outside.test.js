@@ -4,11 +4,11 @@ import directive from '../lib/v-click-outside'
 
 describe('v-click-outside -> directive', () => {
   const div = document.createElement('div')
+  const div2 = document.createElement('div')
   const a = document.createElement('a')
 
   afterEach(() => {
-    directive.onEventBound = undefined
-    directive.cb = undefined
+    directive.els = []
   })
 
   it('it has bind, update and unbind methods available', () => {
@@ -18,9 +18,21 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('bind', () => {
-    it('defines onEventBound function', () => {
+    it('add element to the list', () => {
+      document.addEventListener = jest.fn()
       directive.bind(div)
-      expect(typeof directive.onEventBound).toBe('function')
+      expect(directive.els.length).toBe(1)
+      expect(directive.els[0][0]).toBe(div)
+      expect(document.addEventListener.mock.calls.length).toBe(1)
+    })
+
+    it('add multiple element to the list', () => {
+      document.addEventListener = jest.fn()
+      directive.bind(div)
+      directive.bind(div2)
+      expect(directive.els.length).toBe(2)
+      expect(directive.els[1][0]).toBe(div2)
+      expect(document.addEventListener.mock.calls.length).toBe(1)
     })
   })
 
@@ -34,8 +46,30 @@ describe('v-click-outside -> directive', () => {
 
     it('saves the callback', () => {
       const cb = () => {}
+      directive.bind(div)
       directive.update(div, { value: cb })
-      expect(directive.cb).toBe(cb)
+      expect(directive.els[0][1]).toBe(cb)
+    })
+  })
+
+  describe('unbind', () => {
+    it('remove element of the list', () => {
+      document.removeEventListener = jest.fn()
+      directive.bind(div)
+      directive.unbind(div)
+      expect(directive.els.length).toBe(0)
+      expect(document.removeEventListener.mock.calls.length).toBe(1)
+    })
+
+    it('remove multiple element of the list', () => {
+      document.removeEventListener = jest.fn()
+      directive.bind(div)
+      directive.bind(div2)
+      directive.unbind(div)
+      expect(directive.els[0][0]).toBe(div2)
+      directive.unbind(div2)
+      expect(directive.els.length).toBe(0)
+      expect(document.removeEventListener.mock.calls.length).toBe(1)
     })
   })
 
@@ -45,12 +79,22 @@ describe('v-click-outside -> directive', () => {
 
     it(message, () => {
       const event = { target: a }
-      const onEventBound = directive.onEvent.bind({ el: div })
+      const cb = jest.fn()
+      directive.bind(div)
+      directive.update(div, { value: cb })
 
-      directive.cb = jest.fn()
+      directive.onEvent(event)
+      expect(cb).toHaveBeenCalledWith(event)
+    })
 
-      onEventBound(event)
-      expect(directive.cb).toHaveBeenCalledWith(event)
+    it('dont call any callback', () => {
+      const event = { target: div }
+      const cb = jest.fn()
+      directive.bind(div)
+      directive.update(div, { value: cb })
+
+      directive.onEvent(event)
+      expect(cb).not.toHaveBeenCalled()
     })
   })
 })
