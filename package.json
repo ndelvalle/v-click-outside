@@ -16,21 +16,21 @@
     "url": "git+https://github.com/ndelvalle/v-click-outside.git"
   },
   "author": "ndelvalle <nicolas.delvalle@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ndelvalle/v-click-outside/issues"
   },
   "homepage": "https://github.com/ndelvalle/v-click-outside#readme",
   "devDependencies": {
-    "babel-jest": "^19.0.0",
+    "babel-jest": "^20.0.3",
     "babel-preset-es2015-rollup": "^3.0.0",
-    "jest": "^19.0.2",
+    "jest": "^20.0.4",
     "np": "^2.13.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-filesize": "^1.2.1",
     "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-uglify": "^1.0.1",
+    "rollup-plugin-uglify": "^2.0.1",
     "standard": "^10.0.1"
   },
   "jest": {
