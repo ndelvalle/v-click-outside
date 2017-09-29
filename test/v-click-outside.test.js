@@ -1,6 +1,9 @@
 /* global jest describe it expect afterEach */
 
-import plugin, { directive } from '../lib/index'
+import clickOutside from '../lib/index'
+
+const plugin = clickOutside
+const directive = clickOutside.directive
 
 describe('v-click-outside -> plugin', () => {
   it('install the directive into the vue instance', () => {

@@ -13,11 +13,13 @@ const banner = `/**
  */`
 
 export default {
-  entry: 'lib/index.js',
-  dest: 'dist/v-click-outside.min.js',
-  format: 'umd',
+  input: 'lib/index.js',
+  output: {
+    file: 'dist/v-click-outside.min.js',
+    format: 'umd'
+  },
   moduleId: 'v-click-outside',
-  moduleName: 'v-click-outside',
+  name: 'v-click-outside',
   banner,
   plugins: [
     resolve({
