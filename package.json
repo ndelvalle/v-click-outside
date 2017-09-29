@@ -9,7 +9,8 @@
     "build": "rollup -c",
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "release": "np"
+    "release": "np",
+    "version": "yarn build"
   },
   "repository": {
     "type": "git",
