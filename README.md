@@ -67,7 +67,7 @@ import vClickOutside from 'v-click-outside'
 </script>
 
 <template>
-  <div v-outside="onClickOutside"></div>
+  <div v-click-outside="onClickOutside"></div>
 </template>
 ```
 
