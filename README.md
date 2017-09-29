@@ -51,11 +51,11 @@ Vue.use(vClickOutside)
 Or use it as a directive
 
 ```js
-import { directive as clickOutside } from 'v-click-outside'
+import vClickOutside from 'v-click-outside'
 
 <script>
   export default {
-    directives: { clickOutside },
+    directives: { vClickOutside.directive },
     methods: {
       onClickOutside (event) {
         console.log('Clicked outside. Event: ', event)
