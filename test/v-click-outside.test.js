@@ -1,6 +1,6 @@
 /* global jest describe it expect afterEach */
 
-import plugin, {directive} from '../lib/index'
+import plugin, { directive } from '../lib/index'
 
 describe('v-click-outside -> plugin', () => {
   it('install the directive into the vue instance', () => {
@@ -8,7 +8,8 @@ describe('v-click-outside -> plugin', () => {
       directive: jest.fn()
     }
     plugin.install(vue)
-    expect(vue.directive).not.toHaveBeenCalledWith(['click-outside', directive])
+    expect(vue.directive).toHaveBeenCalledWith('click-outside', directive)
+    expect(vue.directive).toHaveBeenCalledTimes(1)
   })
 })
 
