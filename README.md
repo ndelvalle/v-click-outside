@@ -55,7 +55,9 @@ import vClickOutside from 'v-click-outside'
 
 <script>
   export default {
-    directives: { vClickOutside.directive },
+    directives: {
+      clickOutside: vClickOutside.directive
+    },
     methods: {
       onClickOutside (event) {
         console.log('Clicked outside. Event: ', event)
@@ -65,7 +67,7 @@ import vClickOutside from 'v-click-outside'
 </script>
 
 <template>
-  <div v-click-outside="onClickOutside"></div>
+  <div v-outside="onClickOutside"></div>
 </template>
 ```
 
