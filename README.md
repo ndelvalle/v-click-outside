@@ -48,6 +48,27 @@ Vue.use(vClickOutside)
 </template>
 ```
 
+Or use it as a directive
+
+```js
+import { directive as clickOutside } from 'v-click-outside'
+
+<script>
+  export default {
+    directives: { clickOutside },
+    methods: {
+      onClickOutside (event) {
+        console.log('Clicked outside. Event: ', event)
+      }
+    }
+  };
+</script>
+
+<template>
+  <div v-click-outside="onClickOutside"></div>
+</template>
+```
+
 ## License
 [MIT License](https://github.com/ndelvalle/v-click-outside/blob/master/LICENSE)
 
