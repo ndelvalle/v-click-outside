@@ -34,7 +34,7 @@ describe('v-click-outside -> directive', () => {
   describe('bind', () => {
     it('adds an element to the instances list and adds an event listener', () => {
       document.addEventListener = jest.fn()
-      directive.bind(div1)
+      directive.bind(div1, {})
       expect(directive.instances.length).toBe(1)
       expect(directive.instances[0].el).toBe(div1)
       expect(document.addEventListener.mock.calls.length).toBe(1)
@@ -42,8 +42,8 @@ describe('v-click-outside -> directive', () => {
 
     it('adds multiple elements to the instances list and adds an event listener', () => {
       document.addEventListener = jest.fn()
-      directive.bind(div1)
-      directive.bind(div2)
+      directive.bind(div1, {})
+      directive.bind(div2, {})
       expect(directive.instances.length).toBe(2)
       expect(directive.instances[1].el).toBe(div2)
       expect(document.addEventListener.mock.calls.length).toBe(1)
@@ -58,7 +58,7 @@ describe('v-click-outside -> directive', () => {
 
     it('saves the callback function', () => {
       const cb = () => {}
-      directive.bind(div1)
+      directive.bind(div1, {})
       directive.update(div1, { value: cb })
       expect(directive.instances[0].fn).toBe(cb)
     })
@@ -67,7 +67,7 @@ describe('v-click-outside -> directive', () => {
   describe('unbind', () => {
     it('removes the instance of the list and the event listener', () => {
       document.removeEventListener = jest.fn()
-      directive.bind(div1)
+      directive.bind(div1, {})
       directive.unbind(div1)
       expect(directive.instances.length).toBe(0)
       expect(document.removeEventListener.mock.calls.length).toBe(1)
@@ -75,8 +75,8 @@ describe('v-click-outside -> directive', () => {
 
     it('removes multiple instances of the list and the event listener', () => {
       document.removeEventListener = jest.fn()
-      directive.bind(div1)
-      directive.bind(div2)
+      directive.bind(div1, {})
+      directive.bind(div2, {})
       directive.unbind(div1)
       expect(directive.instances[0].el).toBe(div2)
       directive.unbind(div2)
@@ -92,7 +92,7 @@ describe('v-click-outside -> directive', () => {
     it(message, () => {
       const event = { target: a }
       const cb = jest.fn()
-      directive.bind(div1)
+      directive.bind(div1, {})
       directive.update(div1, { value: cb })
 
       directive.onEvent(event)
@@ -102,7 +102,7 @@ describe('v-click-outside -> directive', () => {
     it('does not execute the callback if the event target its the element from the instance', () => {
       const event = { target: div1 }
       const cb = jest.fn()
-      directive.bind(div1)
+      directive.bind(div1, {})
       directive.update(div1, { value: cb })
 
       directive.onEvent(event)
