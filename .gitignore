@@ -3,3 +3,4 @@ coverage
 dist
 *.log
 .DS_Store
+jest_*
