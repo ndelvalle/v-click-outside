@@ -23,6 +23,7 @@ describe('v-click-outside -> directive', () => {
 
   afterEach(() => {
     directive.instances = []
+    directive.events = ['click']
   })
 
   it('it has bind, update and unbind methods available', () => {
@@ -32,7 +33,8 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('bind', () => {
-    it('adds an element to the instances list and adds an event listener', () => {
+    it('adds an element to the instances list and adds an event listener (On non mobile devices)', () => {
+      directive.events = ['click']
       document.addEventListener = jest.fn()
       directive.bind(div1, {})
       expect(directive.instances.length).toBe(1)
@@ -40,13 +42,14 @@ describe('v-click-outside -> directive', () => {
       expect(document.addEventListener.mock.calls.length).toBe(1)
     })
 
-    it('adds multiple elements to the instances list and adds an event listener', () => {
+    it('adds multiple elements to the instances list and adds an event listener (On mobile devices)', () => {
       document.addEventListener = jest.fn()
+      directive.events = ['click', 'touchstart']
       directive.bind(div1, {})
       directive.bind(div2, {})
       expect(directive.instances.length).toBe(2)
       expect(directive.instances[1].el).toBe(div2)
-      expect(document.addEventListener.mock.calls.length).toBe(1)
+      expect(document.addEventListener.mock.calls.length).toBe(2)
     })
   })
 
@@ -65,7 +68,8 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('unbind', () => {
-    it('removes the instance of the list and the event listener', () => {
+    it('removes the instance of the list and the event listener (On non mobile devices)', () => {
+      directive.events = ['click']
       document.removeEventListener = jest.fn()
       directive.bind(div1, {})
       directive.unbind(div1)
@@ -73,7 +77,17 @@ describe('v-click-outside -> directive', () => {
       expect(document.removeEventListener.mock.calls.length).toBe(1)
     })
 
+    it('removes the instance of the list and the event listener (On mobile devices)', () => {
+      directive.events = ['click', 'touchstart']
+      document.removeEventListener = jest.fn()
+      directive.bind(div1, {})
+      directive.unbind(div1)
+      expect(directive.instances.length).toBe(0)
+      expect(document.removeEventListener.mock.calls.length).toBe(2)
+    })
+
     it('removes multiple instances of the list and the event listener', () => {
+      directive.events = ['click']
       document.removeEventListener = jest.fn()
       directive.bind(div1, {})
       directive.bind(div2, {})
