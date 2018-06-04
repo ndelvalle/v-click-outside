@@ -51,6 +51,13 @@ describe('v-click-outside -> directive', () => {
       expect(directive.instances[1].el).toBe(div2)
       expect(document.addEventListener.mock.calls.length).toBe(2)
     })
+
+    it('adds only one event listener (On mobile devices with notouch modifier)', () => {
+      document.addEventListener = jest.fn()
+      directive.events = ['click', 'touchstart']
+      directive.bind(div1, { modifiers: { notouch: true } })
+      expect(document.addEventListener.mock.calls.length).toBe(1)
+    })
   })
 
   describe('update', () => {
