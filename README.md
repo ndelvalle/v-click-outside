@@ -71,6 +71,15 @@ import vClickOutside from 'v-click-outside'
 </template>
 ```
 
+On mobile devices, the plugin adds both of 'touchstart' and 'click' events to listners .  
+Use it with 'notouch' modifier, it adds only 'click' event.
+
+```js
+<template>
+  <div v-click-outside.notouch="onClickOutside"></div>
+</template>
+```
+
 ## License
 [MIT License](https://github.com/ndelvalle/v-click-outside/blob/master/LICENSE)
 
