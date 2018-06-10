@@ -1,6 +1,6 @@
 {
   "name": "v-click-outside",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Vue directive to react on clicks outside an element",
   "main": "dist/v-click-outside.min.js",
   "scripts": {
