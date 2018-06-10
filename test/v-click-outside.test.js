@@ -100,10 +100,9 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('onEvent', () => {
-    const message = 'it calls the callback if the element is not the same and does ' +
-                    'not contains the event target'
-
-    it(message, () => {
+    const messageTest1 = 'it calls the callback if the element is not the same and ' +
+                         'does not contains the event target'
+    it(messageTest1, () => {
       const event = { target: a }
       const cb = jest.fn()
       directive.bind(div1, {})
@@ -113,7 +112,9 @@ describe('v-click-outside -> directive', () => {
       expect(cb).toHaveBeenCalledWith(event)
     })
 
-    it('does not execute the callback if the event target its the element from the instance', () => {
+    const messageTest2 = 'It does not execute the callback if the event target is the ' +
+                          'element from the directive instance'
+    it(messageTest2, () => {
       const event = { target: div1 }
       const cb = jest.fn()
       directive.bind(div1, {})
@@ -123,9 +124,9 @@ describe('v-click-outside -> directive', () => {
       expect(cb).not.toHaveBeenCalled()
     })
 
-    const messageNotouch = 'does not execute the callback if the event type is ' +
-                           'touchstart and the instance has notouch modifier'
-    it(messageNotouch, () => {
+    const messageTest3 = 'does not execute the callback if the event type is ' +
+                         'touchstart and the instance has notouch modifier'
+    it(messageTest3, () => {
       const event = { target: a, type: 'touchstart' }
       const cb = jest.fn()
       directive.events = ['click', 'touchstart']
