@@ -2,6 +2,8 @@
 
 [![Codeship Status for ndelvalle/v-click-outside](https://app.codeship.com/projects/f8c6e5c0-030c-0135-37dc-52cd8f2ce308/status?branch=master)](https://app.codeship.com/projects/213256)
 [![Coverage Status](https://coveralls.io/repos/github/ndelvalle/v-click-outside/badge.svg?branch=master)](https://coveralls.io/github/ndelvalle/v-click-outside?branch=master)
+[![dependencies Status](https://david-dm.org/ndelvalle/v-click-outside/status.svg)](https://david-dm.org/ndelvalle/v-click-outside)
+[![devDependencies Status](https://david-dm.org/ndelvalle/v-click-outside/dev-status.svg)](https://david-dm.org/ndelvalle/v-click-outside?type=dev)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5ca72a2dd2044278918b45ea1eba122e)](https://www.codacy.com/app/ndelvalle/v-click-outside?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ndelvalle/v-click-outside&amp;utm_campaign=Badge_Grade)
 
 
