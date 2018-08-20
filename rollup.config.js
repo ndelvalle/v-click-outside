@@ -16,7 +16,7 @@ export default {
   input: 'lib/index.js',
   output: {
     file: 'dist/v-click-outside.min.js',
-    format: 'umd'
+    format: 'umd',
   },
   moduleId: 'v-click-outside',
   name: 'v-click-outside',
@@ -25,13 +25,13 @@ export default {
     resolve({
       jsnext: true,
       main: true,
-      browser: true
+      browser: true,
     }),
     babel({
       babelrc: false, // jest makes use of .babelrc
-      presets: ['es2015-rollup']
+      presets: ['es2015-rollup'],
     }),
     uglify(),
-    filesize()
-  ]
+    filesize(),
+  ],
 }

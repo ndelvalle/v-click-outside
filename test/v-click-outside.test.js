@@ -1,14 +1,17 @@
 /* global jest describe it expect afterEach */
 
 import clickOutside from '../lib/index'
+import getDocumentEventListeners from './get-event-listeners'
+
+// window.getEventListeners(element)
 
 const plugin = clickOutside
-const directive = clickOutside.directive
+const { directive } = clickOutside
 
 describe('v-click-outside -> plugin', () => {
   it('install the directive into the vue instance', () => {
     const vue = {
-      directive: jest.fn()
+      directive: jest.fn(),
     }
     plugin.install(vue)
     expect(vue.directive).toHaveBeenCalledWith('click-outside', directive)
@@ -21,11 +24,6 @@ describe('v-click-outside -> directive', () => {
   const div2 = document.createElement('div')
   const a = document.createElement('a')
 
-  afterEach(() => {
-    directive.instances = []
-    directive.events = ['click']
-  })
-
   it('it has bind, update and unbind methods available', () => {
     expect(typeof directive.bind).toBe('function')
     expect(typeof directive.update).toBe('function')
@@ -33,13 +31,21 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('bind', () => {
-    it('adds an element to the instances list and adds an event listener (On non mobile devices)', () => {
-      directive.events = ['click']
-      document.addEventListener = jest.fn()
-      directive.bind(div1, {})
-      expect(directive.instances.length).toBe(1)
-      expect(directive.instances[0].el).toBe(div1)
-      expect(document.addEventListener.mock.calls.length).toBe(1)
+    it.only('adds an event listener to the element', () => {
+      const noop = () => undefined
+      const el = document.createElement('div')
+      const events = ['touchstart', 'click']
+      // document.addEventListener = jest.fn()
+
+      directive.bind(el, { value: noop })
+
+      console.log(123123, window.getEventListeners(el))
+      // expect(el.dataset.handler).toEqual(noop)
+      // expect(el.dataset.middleware).toEqual(noop)
+      // expect(el.dataset.events).toEqual(events)
+
+      // expect(directive.instances[0].el).toBe(div1)
+      // expect(document.addEventListener.mock.calls.length).toBe(1)
     })
 
     it('adds multiple elements to the instances list and adds an event listener (On mobile devices)', () => {
@@ -100,8 +106,9 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('onEvent', () => {
-    const messageTest1 = 'it calls the callback if the element is not the same and ' +
-                         'does not contains the event target'
+    const messageTest1 =
+      'it calls the callback if the element is not the same and ' +
+      'does not contains the event target'
     it(messageTest1, () => {
       const event = { target: a }
       const cb = jest.fn()
@@ -112,8 +119,9 @@ describe('v-click-outside -> directive', () => {
       expect(cb).toHaveBeenCalledWith(event)
     })
 
-    const messageTest2 = 'It does not execute the callback if the event target is the ' +
-                          'element from the directive instance'
+    const messageTest2 =
+      'It does not execute the callback if the event target is the ' +
+      'element from the directive instance'
     it(messageTest2, () => {
       const event = { target: div1 }
       const cb = jest.fn()
@@ -124,8 +132,9 @@ describe('v-click-outside -> directive', () => {
       expect(cb).not.toHaveBeenCalled()
     })
 
-    const messageTest3 = 'does not execute the callback if the event type is ' +
-                         'touchstart and the instance has notouch modifier'
+    const messageTest3 =
+      'does not execute the callback if the event type is ' +
+      'touchstart and the instance has notouch modifier'
     it(messageTest3, () => {
       const event = { target: a, type: 'touchstart' }
       const cb = jest.fn()
