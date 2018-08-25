@@ -84,6 +84,10 @@ import vClickOutside from 'v-click-outside'
   <div v-click-outside="onClickOutside"></div>
 </template>
 ```
+## Example
+
+[![Edit v-click-outside](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/zx7mx8y1ol?module=%2Fsrc%2Fcomponents%2FHelloWorld.vue)
+
 
 ## License
 
