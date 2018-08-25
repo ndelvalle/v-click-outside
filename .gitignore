@@ -4,4 +4,4 @@ dist
 *.log
 .DS_Store
 jest_*
-package-lock.json
+yarn.lock
