@@ -1,9 +1,6 @@
-/* global jest describe it expect afterEach */
+/* global jest describe it expect beforeEach */
 
 import clickOutside from '../lib/index'
-import getDocumentEventListeners from './get-event-listeners'
-
-// window.getEventListeners(element)
 
 const plugin = clickOutside
 const { directive } = clickOutside
@@ -20,10 +17,6 @@ describe('v-click-outside -> plugin', () => {
 })
 
 describe('v-click-outside -> directive', () => {
-  const div1 = document.createElement('div')
-  const div2 = document.createElement('div')
-  const a = document.createElement('a')
-
   it('it has bind, update and unbind methods available', () => {
     expect(typeof directive.bind).toBe('function')
     expect(typeof directive.update).toBe('function')
@@ -31,119 +24,44 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('bind', () => {
-    it.only('adds an event listener to the element', () => {
-      const noop = () => undefined
-      const el = document.createElement('div')
-      const events = ['touchstart', 'click']
-      // document.addEventListener = jest.fn()
-
-      directive.bind(el, { value: noop })
-
-      console.log(123123, window.getEventListeners(el))
-      // expect(el.dataset.handler).toEqual(noop)
-      // expect(el.dataset.middleware).toEqual(noop)
-      // expect(el.dataset.events).toEqual(events)
-
-      // expect(directive.instances[0].el).toBe(div1)
-      // expect(document.addEventListener.mock.calls.length).toBe(1)
+    beforeEach(() => {
+      document.addEventListener = jest.fn()
     })
 
-    it('adds multiple elements to the instances list and adds an event listener (On mobile devices)', () => {
-      document.addEventListener = jest.fn()
-      directive.events = ['click', 'touchstart']
-      directive.bind(div1, {})
-      directive.bind(div2, {})
-      expect(directive.instances.length).toBe(2)
-      expect(directive.instances[1].el).toBe(div2)
-      expect(document.addEventListener.mock.calls.length).toBe(2)
+    it('throws an error if the binding value is not a function or an object', () => {
+      const bind = () => directive.bind(document.createElement('div'), {})
+      expect(bind).toThrowError(/v-click-outside: Binding value must be a function or an object/)
+    })
+
+    it('adds an event listener to the element and stores an instance', () => {
+      const el = document.createElement('div')
+      const noop = () => jest.fn()
+      const config = {
+        handler: noop,
+        events: ['dblclick'],
+        middleware: noop,
+      }
+
+      directive.bind(el, { value: config })
+
+      const [instance] = directive.instances
+
+      expect(directive.instances.length).toEqual(1)
+      expect(instance.eventHandlers.length).toEqual(1)
+
+      const [eventHandler] = instance.eventHandlers
+
+      expect(typeof eventHandler.handler).toEqual('function')
+      expect(eventHandler.event).toEqual(config.events[0])
+      expect(instance.el).toBe(el)
+      expect(document.addEventListener).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('update', () => {
-    it('throws an error if value is not a function', () => {
-      const updateWithNoFunction = () => directive.update(div1, {})
-      expect(updateWithNoFunction).toThrowError(/Argument must be a function/)
-    })
-
-    it('saves the callback function', () => {
-      const cb = () => {}
-      directive.bind(div1, {})
-      directive.update(div1, { value: cb })
-      expect(directive.instances[0].fn).toBe(cb)
-    })
-  })
-
-  describe('unbind', () => {
-    it('removes the instance of the list and the event listener (On non mobile devices)', () => {
-      directive.events = ['click']
-      document.removeEventListener = jest.fn()
-      directive.bind(div1, {})
-      directive.unbind(div1)
-      expect(directive.instances.length).toBe(0)
-      expect(document.removeEventListener.mock.calls.length).toBe(1)
-    })
-
-    it('removes the instance of the list and the event listener (On mobile devices)', () => {
-      directive.events = ['click', 'touchstart']
-      document.removeEventListener = jest.fn()
-      directive.bind(div1, {})
-      directive.unbind(div1)
-      expect(directive.instances.length).toBe(0)
-      expect(document.removeEventListener.mock.calls.length).toBe(2)
-    })
-
-    it('removes multiple instances of the list and the event listener', () => {
-      directive.events = ['click']
-      document.removeEventListener = jest.fn()
-      directive.bind(div1, {})
-      directive.bind(div2, {})
-      directive.unbind(div1)
-      expect(directive.instances[0].el).toBe(div2)
-      directive.unbind(div2)
-      expect(directive.instances.length).toBe(0)
-      expect(document.removeEventListener.mock.calls.length).toBe(1)
-    })
-  })
-
-  describe('onEvent', () => {
-    const messageTest1 =
-      'it calls the callback if the element is not the same and ' +
-      'does not contains the event target'
-    it(messageTest1, () => {
-      const event = { target: a }
-      const cb = jest.fn()
-      directive.bind(div1, {})
-      directive.update(div1, { value: cb })
-
-      directive.onEvent(event)
-      expect(cb).toHaveBeenCalledWith(event)
-    })
-
-    const messageTest2 =
-      'It does not execute the callback if the event target is the ' +
-      'element from the directive instance'
-    it(messageTest2, () => {
-      const event = { target: div1 }
-      const cb = jest.fn()
-      directive.bind(div1, {})
-      directive.update(div1, { value: cb })
-
-      directive.onEvent(event)
-      expect(cb).not.toHaveBeenCalled()
-    })
-
-    const messageTest3 =
-      'does not execute the callback if the event type is ' +
-      'touchstart and the instance has notouch modifier'
-    it(messageTest3, () => {
-      const event = { target: a, type: 'touchstart' }
-      const cb = jest.fn()
-      directive.events = ['click', 'touchstart']
-      directive.bind(div1, { modifiers: { notouch: true } })
-      directive.update(div1, { value: cb })
-
-      directive.onEvent(event)
-      expect(cb).not.toHaveBeenCalled()
+    it('throws an error if the binding value is not a function or an object', () => {
+      const update = () => directive.update(document.createElement('div'), {})
+      expect(update).toThrowError(/v-click-outside: Binding value must be a function or an object/)
     })
   })
 })
