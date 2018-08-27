@@ -1,6 +1,6 @@
 {
   "name": "v-click-outside",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Vue directive to react on clicks outside an element",
   "main": "dist/v-click-outside.min.umd.js",
   "umd:main": "dist/v-click-outside.min.umd.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "test": "jest --coverage",
     "coverage": "open coverage/lcov-report/index.html",
-    "build": "microbundle --entry lib/index.js --target browser --format umd",
+    "build": "microbundle --entry lib/index.js --target browser --format umd --name v-click-outside",
     "lint": "eslint . --ext .js",
     "format": "prettier --write '**/*.{js,json,md}'",
     "format:changed": "pretty-quick",
