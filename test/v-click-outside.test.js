@@ -71,6 +71,7 @@ describe('v-click-outside -> directive', () => {
 
       directive.bind(null, { value: config })
 
+      expect(document.addEventListener).toHaveBeenCalledTimes(0)
       expect(directive.instances.length).toEqual(0)
     })
   })
