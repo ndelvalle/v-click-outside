@@ -7,6 +7,7 @@
   "source": "lib/index.js",
   "scripts": {
     "test": "jest --coverage",
+    "test:watch": "jest --colors --watch",
     "coverage": "open coverage/lcov-report/index.html",
     "build": "microbundle --entry lib/index.js --target browser --format umd --name v-click-outside",
     "lint": "eslint . --ext .js",
@@ -38,7 +39,8 @@
     "husky": "^0.14.3",
     "jest": "^23.5.0",
     "jest-cli": "^23.5.0",
-    "microbundle": "^0.8.0",
+    "lodash": "^4.17.11",
+    "microbundle": "^0.11.0",
     "np": "^3.0.4",
     "prettier": "^1.13.0",
     "pretty-quick": "^1.6.0"
