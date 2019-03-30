@@ -1,20 +1,24 @@
 /* global jest describe it expect beforeEach */
 
+import { merge } from 'lodash'
 import clickOutside from '../lib/index'
 
-const plugin = clickOutside
 const { directive } = clickOutside
 
-function makeConfig(argument) {
-  const noop = () => jest.fn()
+function createHookArguments(el = document.createElement('div'), binding = {}) {
   return [
-    document.createElement('div'),
-    {
-      handler: noop,
-      events: ['dblclick'],
-      middleware: noop,
-      active: undefined,
-    }
+    el,
+    merge(
+      {
+        value: {
+          handler: () => jest.fn(),
+          events: ['dblclick'],
+          middleware: () => jest.fn(),
+          isActive: undefined,
+        },
+      },
+      binding,
+    ),
   ]
 }
 
@@ -23,53 +27,56 @@ describe('v-click-outside -> plugin', () => {
     const vue = {
       directive: jest.fn(),
     }
-    plugin.install(vue)
-    expect(vue.directive).toHaveBeenCalledWith('click-outside', directive)
+    clickOutside.install(vue)
+    expect(vue.directive).toHaveBeenCalledWith('click-outside', clickOutside.directive)
     expect(vue.directive).toHaveBeenCalledTimes(1)
   })
 })
 
 describe('v-click-outside -> directive', () => {
   it('it has bind, update and unbind methods available', () => {
-    expect(typeof directive.bind).toBe('function')
-    expect(typeof directive.update).toBe('function')
-    expect(typeof directive.unbind).toBe('function')
+    expect(typeof clickOutside.directive.bind).toBe('function')
+    expect(typeof clickOutside.directive.update).toBe('function')
+    expect(typeof clickOutside.directive.unbind).toBe('function')
   })
 
   describe('bind', () => {
     beforeEach(() => {
       document.addEventListener = jest.fn()
-      directive.instances.splice(0, directive.instances.length)
+      directive.instances = []
+      jest.useFakeTimers()
     })
 
     it('throws an error if the binding value is not a function or an object', () => {
-      const bind = () => directive.bind(document.createElement('div'), {})
-      expect(bind).toThrowError(/v-click-outside: Binding value must be a function or an object/)
+      expect(() => directive.bind(document.createElement('div'), {})).toThrowError(
+        /v-click-outside: Binding value must be a function or an object/,
+      )
     })
 
     it('adds an event listener to the element and stores an instance', () => {
-      const [el, config] = makeConfig()
+      const [el, binding] = createHookArguments()
 
-      directive.bind(el, { value: config })
+      directive.bind(el, binding)
+      jest.runOnlyPendingTimers()
 
       const [instance] = directive.instances
 
-      expect(directive.instances.length).toEqual(1)
-      expect(instance.eventHandlers.length).toEqual(1)
+      expect(directive.instances.length).toEqual(binding.value.events.length)
+      expect(instance.eventHandlers.length).toEqual(binding.value.events.length)
 
-      const [eventHandler] = instance.eventHandlers
-
-      expect(typeof eventHandler.handler).toEqual('function')
-      expect(eventHandler.event).toEqual(config.events[0])
+      instance.eventHandlers.forEach((eventHandler) =>
+        expect(typeof eventHandler.handler).toEqual('function'),
+      )
       expect(instance.el).toBe(el)
-      expect(document.addEventListener).toHaveBeenCalledTimes(1)
+      expect(document.addEventListener).toHaveBeenCalledTimes(binding.value.events.length)
     })
 
-    it("doesn't do anything when config.active is false", () => {
-      const [, config] = makeConfig()
-      config.active = false
+    it("doesn't do anything when binding value isActive is false", () => {
+      const [el, binding] = createHookArguments()
+      binding.value.isActive = false
 
-      directive.bind(null, { value: config })
+      directive.bind(el, binding)
+      jest.runOnlyPendingTimers()
 
       expect(document.addEventListener).toHaveBeenCalledTimes(0)
       expect(directive.instances.length).toEqual(0)
@@ -77,82 +84,111 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('unbind', () => {
-    it("can remove whatever bind adds", () => {
-      const [el1, config1] = makeConfig()
-      directive.bind(el1, { value: config1 })
-
+    it('can remove whatever bind adds', () => {
+      const [el1, binding1] = createHookArguments()
+      directive.bind(el1, binding1)
       expect(directive.instances.length).toEqual(1)
 
-      const [el2, config2] = makeConfig()
-      directive.bind(el2, { value: config2 })
-
+      const [el2, binding2] = createHookArguments()
+      directive.bind(el2, binding2)
       expect(directive.instances.length).toEqual(2)
 
-      const [el3, config3] = makeConfig()
-      directive.bind(el3, { value: config3 })
-
+      const [el3, binding3] = createHookArguments()
+      directive.bind(el3, binding3)
       expect(directive.instances.length).toEqual(3)
 
-      const els = directive.instances.map(instance => instance.el)
-      while (els.length) {
-        const el = els.pop()
-
-        directive.unbind(el)
-        expect(directive.instances.length).toEqual(els.length)
-      }
+      directive.instances
+        .map((instance) => instance.el)
+        .forEach((el) => {
+          directive.unbind(el)
+          expect(directive.instances.find((instance) => instance.el === el)).toBeUndefined()
+        })
     })
   })
 
   describe('update', () => {
     it('throws an error if the binding value is not a function or an object', () => {
-      const update = () => directive.update(document.createElement('div'), {})
-      expect(update).toThrowError(/v-click-outside: Binding value must be a function or an object/)
+      expect(() => directive.update(document.createElement('div'), {})).toThrowError(
+        /v-click-outside: Binding value must be a function or an object/,
+      )
     })
 
-    describe("transitions correctly", () => {
+    describe('updates is active binding value', () => {
       beforeEach(() => {
+        jest.useFakeTimers()
         document.addEventListener = jest.fn()
         document.removeEventListener = jest.fn()
-        directive.instances.splice(0, directive.instances.length)
+        directive.instances = []
       })
 
-      it("from true to true", () => {
-        const [el, config] = makeConfig()
-        directive.bind(el, { value: config })
+      it('updates is active binding value from true to true', () => {
+        const [el, binding] = createHookArguments()
+
+        directive.bind(el, binding)
+        jest.runOnlyPendingTimers()
+
         expect(directive.instances.length).toEqual(1)
         expect(document.addEventListener).toHaveBeenCalledTimes(1)
 
-        directive.update(el, { value: config })
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
         expect(directive.instances.length).toEqual(1)
         expect(document.addEventListener).toHaveBeenCalledTimes(2)
-        expect(document.removeEventListener).toHaveBeenCalledTimes(1)
+        expect(document.removeEventListener).toHaveBeenCalledTimes(binding.value.events.length)
       })
-      it("from true to false", () => {
-        const [el, config] = makeConfig()
-        directive.bind(el, { value: config })
+
+      it('updates is active binding value from true to false', () => {
+        const [el, binding] = createHookArguments()
+
+        directive.bind(el, binding)
+        jest.runOnlyPendingTimers()
+
         expect(directive.instances.length).toEqual(1)
         expect(document.addEventListener).toHaveBeenCalledTimes(1)
 
-        config.active = false
-        directive.update(el, { value: config })
+        binding.value.isActive = false
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
         expect(directive.instances.length).toEqual(0)
         expect(document.addEventListener).toHaveBeenCalledTimes(1)
         expect(document.removeEventListener).toHaveBeenCalledTimes(1)
       })
-      it("from false to true", () => {
-        const [el, config] = makeConfig()
-        directive.update(el, { value: config })
-        expect(directive.instances.length).toEqual(1)
-        expect(document.addEventListener).toHaveBeenCalledTimes(1)
-        expect(document.removeEventListener).toHaveBeenCalledTimes(1)
-      })
-      it("from false to false", () => {
-        const [el, config] = makeConfig()
-        config.active = false
-        directive.update(el, { value: config })
+
+      it('updates is active binding value from false to true', () => {
+        const [el, binding] = createHookArguments(undefined, { value: { isActive: false } })
+
+        directive.bind(el, binding)
+        jest.runOnlyPendingTimers()
+
         expect(directive.instances.length).toEqual(0)
         expect(document.addEventListener).toHaveBeenCalledTimes(0)
-        expect(document.removeEventListener).toHaveBeenCalledTimes(1)
+
+        binding.value.isActive = true
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(directive.instances.length).toEqual(1)
+        expect(document.addEventListener).toHaveBeenCalledTimes(1)
+        expect(document.removeEventListener).toHaveBeenCalledTimes(0)
+      })
+
+      it('updates is active binding value from false to false', () => {
+        const [el, binding] = createHookArguments(undefined, { value: { isActive: false } })
+
+        directive.bind(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(directive.instances.length).toEqual(0)
+        expect(document.addEventListener).toHaveBeenCalledTimes(0)
+
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(directive.instances.length).toEqual(0)
+        expect(document.addEventListener).toHaveBeenCalledTimes(0)
+        expect(document.removeEventListener).toHaveBeenCalledTimes(0)
       })
     })
   })
