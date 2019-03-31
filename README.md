@@ -35,7 +35,10 @@ Vue.use(vClickOutside)
       vcoConfig: {
         handler: this.handler,
         middleware: this.middleware,
-        events: ['dblclick', 'click']
+        events: ['dblclick', 'click'],
+        // Note: The default value is true, but in case you want to activate / deactivate
+        //       this directive dynamically use this attribute.
+        isActive: true
       }
     },
     methods: {
