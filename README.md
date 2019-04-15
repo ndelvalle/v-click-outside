@@ -93,7 +93,7 @@ import vClickOutside from 'v-click-outside'
 
 ## Migrate from version 1
 
-The `notouch` modifier is not longer supported, same functionality can be achieved using a middleware function
+The `notouch` modifier is no longer supported, same functionality can be achieved using a middleware function
 
 
 ## License
