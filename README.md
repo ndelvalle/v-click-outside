@@ -87,6 +87,7 @@ import vClickOutside from 'v-click-outside'
   <div v-click-outside="onClickOutside"></div>
 </template>
 ```
+
 ## Example
 
 [![Edit v-click-outside](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/zx7mx8y1ol?module=%2Fsrc%2Fcomponents%2FHelloWorld.vue)
@@ -94,7 +95,6 @@ import vClickOutside from 'v-click-outside'
 ## Migrate from version 1
 
 The `notouch` modifier is no longer supported, same functionality can be achieved using a middleware function
-
 
 ## License
 
