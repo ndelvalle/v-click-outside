@@ -114,9 +114,9 @@ describe('v-click-outside -> directive', () => {
 
   describe('update', () => {
     it('throws an error if the binding value is not a function or an object', () => {
-      expect(() => directive.update(document.createElement('div'), {})).toThrowError(
-        /v-click-outside: Binding value must be a function or an object/,
-      )
+      expect(() =>
+        directive.update(document.createElement('div'), { value: 'no value' }),
+      ).toThrowError(/v-click-outside: Binding value must be a function or an object/)
     })
 
     describe('updates is active binding value', () => {
