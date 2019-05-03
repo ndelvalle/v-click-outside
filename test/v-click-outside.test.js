@@ -1,4 +1,4 @@
-/* global jest describe it expect beforeEach */
+/* global jest describe it expect beforeEach beforeAll */
 
 import { merge } from 'lodash'
 import clickOutside from '../lib/index'
@@ -84,17 +84,23 @@ describe('v-click-outside -> directive', () => {
   })
 
   describe('unbind', () => {
+    beforeAll(() => {
+      jest.useFakeTimers()
+    })
     it('can remove whatever bind adds', () => {
       const [el1, binding1] = createHookArguments()
       directive.bind(el1, binding1)
+      jest.runOnlyPendingTimers()
       expect(directive.instances.length).toEqual(1)
 
       const [el2, binding2] = createHookArguments()
       directive.bind(el2, binding2)
+      jest.runOnlyPendingTimers()
       expect(directive.instances.length).toEqual(2)
 
       const [el3, binding3] = createHookArguments()
       directive.bind(el3, binding3)
+      jest.runOnlyPendingTimers()
       expect(directive.instances.length).toEqual(3)
 
       directive.instances
@@ -108,9 +114,9 @@ describe('v-click-outside -> directive', () => {
 
   describe('update', () => {
     it('throws an error if the binding value is not a function or an object', () => {
-      expect(() => directive.update(document.createElement('div'), {})).toThrowError(
-        /v-click-outside: Binding value must be a function or an object/,
-      )
+      expect(() =>
+        directive.update(document.createElement('div'), { value: 'no value' }),
+      ).toThrowError(/v-click-outside: Binding value must be a function or an object/)
     })
 
     describe('updates is active binding value', () => {
@@ -130,7 +136,19 @@ describe('v-click-outside -> directive', () => {
         expect(directive.instances.length).toEqual(1)
         expect(document.addEventListener).toHaveBeenCalledTimes(1)
 
+        binding.oldValue = binding.value
         directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(directive.instances.length).toEqual(1)
+        expect(document.addEventListener).toHaveBeenCalledTimes(1)
+        expect(document.removeEventListener).toHaveBeenCalledTimes(0)
+
+        const [, newBinding] = createHookArguments(undefined, {
+          value: { events: ['click'] },
+          oldValue: binding.oldValue,
+        })
+        directive.update(el, newBinding)
         jest.runOnlyPendingTimers()
 
         expect(directive.instances.length).toEqual(1)
@@ -164,7 +182,9 @@ describe('v-click-outside -> directive', () => {
 
         expect(directive.instances.length).toEqual(0)
         expect(document.addEventListener).toHaveBeenCalledTimes(0)
+        expect(document.removeEventListener).toHaveBeenCalledTimes(0)
 
+        binding.oldValue = Object.assign({}, binding.value)
         binding.value.isActive = true
         directive.update(el, binding)
         jest.runOnlyPendingTimers()
@@ -172,6 +192,17 @@ describe('v-click-outside -> directive', () => {
         expect(directive.instances.length).toEqual(1)
         expect(document.addEventListener).toHaveBeenCalledTimes(1)
         expect(document.removeEventListener).toHaveBeenCalledTimes(0)
+
+        const [, newBinding] = createHookArguments(undefined, {
+          value: { events: ['click'] },
+          oldValue: binding.value,
+        })
+        directive.update(el, newBinding)
+        jest.runOnlyPendingTimers()
+
+        expect(directive.instances.length).toEqual(1)
+        expect(document.addEventListener).toHaveBeenCalledTimes(2)
+        expect(document.removeEventListener).toHaveBeenCalledTimes(binding.value.events.length)
       })
 
       it('updates is active binding value from false to false', () => {
