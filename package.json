@@ -38,7 +38,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "husky": "^2.2.0",
     "jest": "^24.7.1",
-    "jest-cli": "^23.5.0",
+    "jest-cli": "^24.8.0",
     "lodash": "^4.17.11",
     "microbundle": "^0.11.0",
     "np": "^5.0.1",
