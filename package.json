@@ -57,5 +57,8 @@
   },
   "engines": {
     "node": ">=6"
+  },
+  "dependencies": {
+    "component-tap-event": "^1.1.4"
   }
 }
