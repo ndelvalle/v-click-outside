@@ -184,7 +184,7 @@ describe('v-click-outside -> directive', () => {
         expect(document.addEventListener).toHaveBeenCalledTimes(0)
         expect(document.removeEventListener).toHaveBeenCalledTimes(0)
 
-        binding.oldValue = Object.assign({}, binding.value)
+        binding.oldValue = { ...binding.value }
         binding.value.isActive = true
         directive.update(el, binding)
         jest.runOnlyPendingTimers()
