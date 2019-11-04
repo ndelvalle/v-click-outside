@@ -2,3 +2,4 @@ rollup.config.js
 coverage
 test
 yarn.lock
+example
