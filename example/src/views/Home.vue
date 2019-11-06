@@ -29,15 +29,15 @@ export default {
   },
 
   methods: {
-    ffefd5(ev, el) {
-      console.log('Clicked outside ffefd5!', ev, el)
+    ffefd5(ev) {
+      console.log('Clicked outside ffefd5!', ev)
     },
 
-    c13f10(ev, el) {
-      console.log('Clicked outside c13f10!', ev, el)
+    c13f10(ev) {
+      console.log('Clicked outside c13f10!', ev)
     },
-    middleware(ev, el) {
-      console.log('Middleware!', ev, el)
+    middleware(ev) {
+      console.log('Middleware!', ev)
       return true
     },
   },
