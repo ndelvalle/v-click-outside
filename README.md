@@ -1,6 +1,6 @@
 # v-click-outside
 
-[![Codeship Status for ndelvalle/v-click-outside](https://app.codeship.com/projects/f8c6e5c0-030c-0135-37dc-52cd8f2ce308/status?branch=master)](https://app.codeship.com/projects/213256)
+[![Build Status](https://travis-ci.com/ndelvalle/v-click-outside.svg?branch=master)](https://travis-ci.com/ndelvalle/v-click-outside)
 [![Coverage Status](https://coveralls.io/repos/github/ndelvalle/v-click-outside/badge.svg?branch=master)](https://coveralls.io/github/ndelvalle/v-click-outside?branch=master)
 [![dependencies Status](https://david-dm.org/ndelvalle/v-click-outside/status.svg)](https://david-dm.org/ndelvalle/v-click-outside)
 [![devDependencies Status](https://david-dm.org/ndelvalle/v-click-outside/dev-status.svg)](https://david-dm.org/ndelvalle/v-click-outside?type=dev)
