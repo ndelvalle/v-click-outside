@@ -43,7 +43,7 @@ function bind(el, { value }) {
   }))
 
   el[HANDLERS_PROPERTY].forEach(({ event, handler }) =>
-    document.documentElement.addEventListener(event, handler, false),
+    setTimeout(() => document.documentElement.addEventListener(event, handler, false), 0),
   )
 }
 
