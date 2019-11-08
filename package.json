@@ -2,8 +2,8 @@
   "name": "v-click-outside",
   "version": "2.1.5",
   "description": "Vue directive to react on clicks outside an element",
-  "main": "dist/v-click-outside.min.umd.js",
-  "umd:main": "dist/v-click-outside.min.umd.js",
+  "main": "dist/v-click-outside.umd.js",
+  "umd:main": "dist/v-click-outside.umd.js",
   "source": "src/index.js",
   "scripts": {
     "test": "jest --coverage",
