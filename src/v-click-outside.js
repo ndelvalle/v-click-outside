@@ -49,10 +49,12 @@ function bind(el, { value }) {
   }))
 
   el[HANDLERS_PROPERTY].forEach(({ event, handler }) =>
-    setTimeout(
-      () => document.documentElement.addEventListener(event, handler, false),
-      0,
-    ),
+    setTimeout(() => {
+      if (!el[HANDLERS_PROPERTY]) {
+        return
+      }
+      document.documentElement.addEventListener(event, handler, false)
+    }, 0),
   )
 }
 
