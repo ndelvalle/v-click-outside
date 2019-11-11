@@ -1,6 +1,6 @@
 {
   "name": "v-click-outside",
-  "version": "2.1.5",
+  "version": "3.0.0",
   "description": "Vue directive to react on clicks outside an element",
   "main": "dist/v-click-outside.umd.js",
   "umd:main": "dist/v-click-outside.umd.js",
