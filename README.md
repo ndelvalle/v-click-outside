@@ -96,6 +96,10 @@ import vClickOutside from 'v-click-outside'
 
 The `notouch` modifier is no longer supported, same functionality can be achieved using a middleware function
 
+## Migrate from version 2
+
+The HTML `el` is not sent in the handler function argument any more. See https://github.com/ndelvalle/v-click-outside/issues/137 for more details.
+
 ## License
 
 [MIT License](https://github.com/ndelvalle/v-click-outside/blob/master/LICENSE)

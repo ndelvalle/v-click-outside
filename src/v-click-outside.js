@@ -2,13 +2,17 @@ const HANDLERS_PROPERTY = '__v-click-outside'
 const HAS_WINDOWS = typeof window !== 'undefined'
 const HAS_NAVIGATOR = typeof navigator !== 'undefined'
 const IS_TOUCH =
-  HAS_WINDOWS && ('ontouchstart' in window || (HAS_NAVIGATOR && navigator.msMaxTouchPoints > 0))
+  HAS_WINDOWS &&
+  ('ontouchstart' in window ||
+    (HAS_NAVIGATOR && navigator.msMaxTouchPoints > 0))
 const EVENTS = IS_TOUCH ? ['touchstart'] : ['click']
 
 function processDirectiveArguments(bindingValue) {
   const isFunction = typeof bindingValue === 'function'
   if (!isFunction && typeof bindingValue !== 'object') {
-    throw new Error('v-click-outside: Binding value must be a function or an object')
+    throw new Error(
+      'v-click-outside: Binding value must be a function or an object',
+    )
   }
 
   return {
@@ -26,13 +30,15 @@ function onEvent({ el, event, handler, middleware }) {
     return
   }
 
-  if (middleware(event, el)) {
-    handler(event, el)
+  if (middleware(event)) {
+    handler(event)
   }
 }
 
 function bind(el, { value }) {
-  const { events, handler, middleware, isActive } = processDirectiveArguments(value)
+  const { events, handler, middleware, isActive } = processDirectiveArguments(
+    value,
+  )
   if (!isActive) {
     return
   }
@@ -43,7 +49,12 @@ function bind(el, { value }) {
   }))
 
   el[HANDLERS_PROPERTY].forEach(({ event, handler }) =>
-    setTimeout(() => document.documentElement.addEventListener(event, handler, false), 0),
+    setTimeout(() => {
+      if (!el[HANDLERS_PROPERTY]) {
+        return
+      }
+      document.documentElement.addEventListener(event, handler, false)
+    }, 0),
   )
 }
 
