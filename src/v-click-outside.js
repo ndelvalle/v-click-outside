@@ -1,3 +1,5 @@
+import 'event-propagation-path'
+
 const HANDLERS_PROPERTY = '__v-click-outside'
 const HAS_WINDOWS = typeof window !== 'undefined'
 const HAS_NAVIGATOR = typeof navigator !== 'undefined'
@@ -24,7 +26,11 @@ function processDirectiveArguments(bindingValue) {
 }
 
 function onEvent({ el, event, handler, middleware }) {
-  const isClickOutside = event.target !== el && !el.contains(event.target)
+  const outsideCheck = event.propagationPath
+    ? event.propagationPath().indexOf(el) < 0
+    : !el.contains(event.target)
+
+  const isClickOutside = event.target !== el && outsideCheck
 
   if (!isClickOutside) {
     return
