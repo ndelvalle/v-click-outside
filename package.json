@@ -57,8 +57,5 @@
   },
   "engines": {
     "node": ">=6"
-  },
-  "dependencies": {
-    "event-propagation-path": "^1.0.5"
   }
 }

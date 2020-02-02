@@ -1,5 +1,3 @@
-import 'event-propagation-path'
-
 const HANDLERS_PROPERTY = '__v-click-outside'
 const HAS_WINDOWS = typeof window !== 'undefined'
 const HAS_NAVIGATOR = typeof navigator !== 'undefined'
@@ -26,9 +24,12 @@ function processDirectiveArguments(bindingValue) {
 }
 
 function onEvent({ el, event, handler, middleware }) {
-  const outsideCheck = event.propagationPath
-    ? event.propagationPath().indexOf(el) < 0
-    : !el.contains(event.target)
+  // Note: composedPath is not supported on IE and Edge, more information here:
+  //       https://developer.mozilla.org/en-US/docs/Web/API/Event/composedPath
+  //       In the meanwhile, we are using el.contains for those browsers, not
+  //       the ideal solution, but using IE or EDGE is not ideal either.
+  const path = event.path || (event.composedPath && event.composedPath())
+  const outsideCheck = path ? path.indexOf(el) < 0 : !el.contains(event.target)
 
   const isClickOutside = event.target !== el && outsideCheck
 
@@ -56,6 +57,8 @@ function bind(el, { value }) {
 
   el[HANDLERS_PROPERTY].forEach(({ event, handler }) =>
     setTimeout(() => {
+      // Note: More info about this implementation can be found here:
+      //       https://github.com/ndelvalle/v-click-outside/issues/137
       if (!el[HANDLERS_PROPERTY]) {
         return
       }
@@ -80,8 +83,10 @@ function update(el, { value, oldValue }) {
   bind(el, { value })
 }
 
-export default {
+const directive = {
   bind,
   update,
   unbind,
 }
+
+export default HAS_WINDOWS ? directive : {}

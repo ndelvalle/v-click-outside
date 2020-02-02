@@ -42,17 +42,17 @@ Vue.use(vClickOutside)
       }
     },
     methods: {
-      onClickOutside (event, el) {
+      onClickOutside (event) {
         console.log('Clicked outside. Event: ', event)
       },
 
-      handler (event, el) {
+      handler (event) {
         console.log('Clicked outside (Using config), middleware returned true :)')
       },
       // Note: The middleware will be executed if the event was fired outside the element.
       //       It should have only sync functionality and it should return a boolean to
       //       define if the handler should be fire or not
-      middleware (event, el) {
+      middleware (event) {
         return event.target.className !== 'modal'
       }
     }
@@ -98,7 +98,7 @@ The `notouch` modifier is no longer supported, same functionality can be achieve
 
 ## Migrate from version 2
 
-The HTML `el` is not sent in the handler function argument any more. See https://github.com/ndelvalle/v-click-outside/issues/137 for more details.
+The HTML `el` is not sent in the handler function argument any more. Review [this issue](https://github.com/ndelvalle/v-click-outside/issues/137) for more details.
 
 ## License
 
