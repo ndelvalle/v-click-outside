@@ -88,6 +88,60 @@ import vClickOutside from 'v-click-outside'
 </template>
 ```
 
+Or use directive‘s hooks programatically
+
+```vue
+<script>
+  import vClickOutside from 'v-click-outside'
+  const { bind, unbind } = vClickOutside.directive
+
+  export default {
+    name: 'RenderlessExample',
+
+    mounted() {
+      const this._el = document.querySelector('data-ref', 'some-uid')
+      // Note: v-click-outside config or handler needs to be passed to the
+      //       "bind" function 2nd argument as object with a "value" key:
+      //       same as Vue’s directives "binding" format.
+      // https://vuejs.org/v2/guide/custom-directive.html#Directive-Hook-Arguments
+      bind(this._el, { value: this.onOutsideClick })
+    },
+    beforeDestroy() {
+      unbind(this._el)
+    },
+
+    methods: {
+      onClickOutside (event) {
+        console.log('Clicked outside. Event: ', event)
+      }
+    },
+
+    render() {
+      return this.$scopedSlots.default({
+        // Note: you can't pass vue's $refs (ref attribute) via slot-scope,
+        //       and have this.$refs property populated as it will be
+        //       interpreted as a regular html attribute. Workaround it 
+        //       with good old data-attr + querySelector combo.
+        props: { 'data-ref': 'some-uid' }
+      })
+    }
+  };
+</script>
+```
+
+```vue
+<!-- SomeComponent.vue -->
+<template>
+  <renderless-example v-slot:default="slotScope">
+    <div v-bind="slotScope.props">
+      Transparently bound v-click-outside directive via slotScope
+    </div>
+  </renderless-example>
+</template>
+```
+
+See [#220](https://github.com/ndelvalle/v-click-outside/issues/220) for details or [check-out this demo](https://codesandbox.io/s/v-click-outside-programatic-usage-o9drq)
+
 ## Example
 
 [![Edit v-click-outside](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/zx7mx8y1ol?module=%2Fsrc%2Fcomponents%2FHelloWorld.vue)
