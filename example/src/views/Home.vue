@@ -12,6 +12,7 @@
       <div class="lime-box" ref="limeEl">
         <p>Click Outside #lime box</p>
       </div>
+      <iframe class="iframe" src="/about" width="100%" />
     </div>
   </div>
 </template>
@@ -77,5 +78,9 @@ export default {
   background-color: lime;
   height: 50px;
 }
-</style>
 
+.iframe {
+  border: 1px solid lightgrey;
+  margin-top: 1em;
+}
+</style>
