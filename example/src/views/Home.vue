@@ -9,11 +9,17 @@
       <div class="c13f10-box" v-click-outside="config">
         <p>Click Outside #c13f10 box</p>
       </div>
+      <div class="lime-box" ref="limeEl">
+        <p>Click Outside #lime box</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import vClickOutside from '../../../src'
+const { bind, unbind } = vClickOutside.directive
+
 export default {
   name: 'home',
 
@@ -28,6 +34,14 @@ export default {
     }
   },
 
+  mounted() {
+    bind(this.$refs.limeEl, { value: this.lime })
+  },
+
+  beforeDestroy() {
+    unbind(this.$refs.limeEl)
+  },
+
   methods: {
     ffefd5(ev) {
       console.log('Clicked outside ffefd5!', ev)
@@ -39,6 +53,9 @@ export default {
     middleware(ev) {
       console.log('Middleware!', ev)
       return true
+    },
+    lime(ev) {
+      console.log('Clicked outside lime!', ev)
     },
   },
 }
@@ -53,6 +70,11 @@ export default {
 
 .c13f10-box {
   background-color: #c13f10;
+  height: 50px;
+}
+
+.lime-box {
+  background-color: lime;
   height: 50px;
 }
 </style>
