@@ -18,6 +18,7 @@ function createHookArguments(el = document.createElement('div'), binding = {}) {
           events: ['dblclick'],
           middleware: () => jest.fn(),
           isActive: undefined,
+          detectIframe: undefined,
         },
       },
       binding,
@@ -83,16 +84,6 @@ describe('v-click-outside -> directive', () => {
       expect(window.addEventListener).toHaveBeenCalledTimes(1)
     })
 
-    it('adds and event listener to the window, as click detection mechanism on iframes', () => {
-      const directive = createDirective()
-      const [el, binding] = createHookArguments()
-
-      directive.bind(el, binding)
-      jest.runOnlyPendingTimers()
-
-      expect(window.addEventListener).toHaveBeenCalledTimes(1)
-    })
-
     it("doesn't do anything when binding value isActive attribute is false", () => {
       const directive = createDirective()
       const [el, binding] = createHookArguments()
@@ -104,6 +95,26 @@ describe('v-click-outside -> directive', () => {
       expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(0)
       expect(window.addEventListener).toHaveBeenCalledTimes(0)
       expect(el[HANDLERS_PROPERTY]).toBeUndefined()
+    })
+
+    it('detects iframe clicks, if bindingValue.detectIframe attribute is not false', () => {
+      const directive = createDirective()
+      const [el, binding] = createHookArguments()
+
+      directive.bind(el, binding)
+      jest.runOnlyPendingTimers()
+
+      expect(window.addEventListener).toHaveBeenCalledTimes(1)
+
+      const directive2 = createDirective()
+      const [el2, binding2] = createHookArguments(undefined, {
+        value: { detectIframe: false },
+      })
+
+      directive2.bind(el2, binding2)
+      jest.runOnlyPendingTimers()
+
+      expect(window.addEventListener).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -334,6 +345,55 @@ describe('v-click-outside -> directive', () => {
         ).toHaveBeenCalledTimes(0)
         expect(window.addEventListener).toHaveBeenCalledTimes(0)
         expect(window.removeEventListener).toHaveBeenCalledTimes(0)
+      })
+    })
+
+    describe('updates "detectIframe" binding value', () => {
+      beforeEach(() => {
+        jest.useFakeTimers()
+        window.addEventListener = jest.fn()
+        window.removeEventListener = jest.fn()
+      })
+
+      it('works', () => {
+        const directive = createDirective()
+        const [el, binding] = createHookArguments()
+
+        directive.bind(el, binding)
+        jest.runOnlyPendingTimers()
+
+        // starts true by default
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(0)
+
+        // TRUE TO FALSE
+        binding.oldValue = { ...binding.value }
+        binding.value.detectIframe = false
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        // Same count
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
+        // Event remove
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+
+        // FALSE TO TRUE
+        binding.oldValue = { ...binding.value }
+        binding.value.detectIframe = true
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(window.addEventListener).toHaveBeenCalledTimes(2)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+
+        // TRUE TO TRUE
+        binding.oldValue = { ...binding.value }
+        binding.value.detectIframe = true
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(window.addEventListener).toHaveBeenCalledTimes(2)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
       })
     })
   })

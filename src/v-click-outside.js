@@ -20,6 +20,7 @@ function processDirectiveArguments(bindingValue) {
     middleware: bindingValue.middleware || ((item) => item),
     events: bindingValue.events || EVENTS,
     isActive: !(bindingValue.isActive === false),
+    detectIframe: !(bindingValue.detectIframe === false),
   }
 }
 
@@ -58,29 +59,32 @@ function onEvent({ el, event, handler, middleware }) {
 }
 
 function bind(el, { value }) {
-  const { events, handler, middleware, isActive } = processDirectiveArguments(
-    value,
-  )
+  const {
+    events,
+    handler,
+    middleware,
+    isActive,
+    detectIframe,
+  } = processDirectiveArguments(value)
   if (!isActive) {
     return
   }
 
-  // Note: keep events array immutable, since events value defaults to
-  //       EVENTS variable reference.
-  el[HANDLERS_PROPERTY] = ['vco:faux-iframe-click', ...events].map(
-    (eventName, i) => {
-      const isForIframe = i === 0
+  el[HANDLERS_PROPERTY] = events.map((eventName) => ({
+    event: eventName,
+    srcTarget: document.documentElement,
+    handler: (event) => onEvent({ event, el, handler, middleware }),
+  }))
 
-      return {
-        event: isForIframe ? 'blur' : eventName,
-        srcTarget: isForIframe ? window : document.documentElement,
-        handler: isForIframe
-          ? (event) =>
-              onFauxIframeClick({ event, eventName, handler, middleware })
-          : (event) => onEvent({ event, el, handler, middleware }),
-      }
-    },
-  )
+  if (detectIframe) {
+    const detectIframeEvent = {
+      event: 'blur',
+      srcTarget: window,
+      handler: (event) => onFauxIframeClick({ event, handler, middleware }),
+    }
+
+    el[HANDLERS_PROPERTY] = [...el[HANDLERS_PROPERTY], detectIframeEvent]
+  }
 
   el[HANDLERS_PROPERTY].forEach(({ event, srcTarget, handler }) =>
     setTimeout(() => {
