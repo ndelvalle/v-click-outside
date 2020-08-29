@@ -1,4 +1,4 @@
-/* global jest describe it expect beforeEach beforeAll */
+/* global jest describe it expect beforeEach afterEach beforeAll */
 
 import { merge } from 'lodash'
 import clickOutside from '../src/index'
@@ -18,6 +18,7 @@ function createHookArguments(el = document.createElement('div'), binding = {}) {
           events: ['dblclick'],
           middleware: () => jest.fn(),
           isActive: undefined,
+          detectIframe: undefined,
         },
       },
       binding,
@@ -49,6 +50,7 @@ describe('v-click-outside -> directive', () => {
   describe('bind', () => {
     beforeEach(() => {
       document.documentElement.addEventListener = jest.fn()
+      window.addEventListener = jest.fn()
       jest.useFakeTimers()
     })
 
@@ -67,7 +69,9 @@ describe('v-click-outside -> directive', () => {
       directive.bind(el, binding)
       jest.runOnlyPendingTimers()
 
-      expect(el[HANDLERS_PROPERTY].length).toEqual(binding.value.events.length)
+      expect(el[HANDLERS_PROPERTY].length).toEqual(
+        binding.value.events.length + 1, // [vco:faux-iframe-click]
+      )
 
       el[HANDLERS_PROPERTY].forEach((eventHandler) =>
         expect(typeof eventHandler.handler).toEqual('function'),
@@ -76,6 +80,8 @@ describe('v-click-outside -> directive', () => {
       expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
         binding.value.events.length,
       )
+
+      expect(window.addEventListener).toHaveBeenCalledTimes(1)
     })
 
     it("doesn't do anything when binding value isActive attribute is false", () => {
@@ -87,7 +93,28 @@ describe('v-click-outside -> directive', () => {
       jest.runOnlyPendingTimers()
 
       expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(0)
+      expect(window.addEventListener).toHaveBeenCalledTimes(0)
       expect(el[HANDLERS_PROPERTY]).toBeUndefined()
+    })
+
+    it('detects iframe clicks, if bindingValue.detectIframe attribute is not false', () => {
+      const directive = createDirective()
+      const [el, binding] = createHookArguments()
+
+      directive.bind(el, binding)
+      jest.runOnlyPendingTimers()
+
+      expect(window.addEventListener).toHaveBeenCalledTimes(1)
+
+      const directive2 = createDirective()
+      const [el2, binding2] = createHookArguments(undefined, {
+        value: { detectIframe: false },
+      })
+
+      directive2.bind(el2, binding2)
+      jest.runOnlyPendingTimers()
+
+      expect(window.addEventListener).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -95,6 +122,11 @@ describe('v-click-outside -> directive', () => {
     beforeAll(() => {
       jest.useFakeTimers()
       document.documentElement.removeEventListener = jest.fn()
+      window.removeEventListener = jest.fn()
+    })
+
+    afterEach(() => {
+      jest.clearAllMocks()
     })
 
     it('removes event listeners attached to the element', () => {
@@ -103,17 +135,17 @@ describe('v-click-outside -> directive', () => {
       const [el1, binding1] = createHookArguments()
       directive.bind(el1, binding1)
       jest.runOnlyPendingTimers()
-      expect(el1[HANDLERS_PROPERTY].length).toEqual(1)
+      expect(el1[HANDLERS_PROPERTY].length).toEqual(2)
 
       const [el2, binding2] = createHookArguments()
       directive.bind(el2, binding2)
       jest.runOnlyPendingTimers()
-      expect(el2[HANDLERS_PROPERTY].length).toEqual(1)
+      expect(el2[HANDLERS_PROPERTY].length).toEqual(2)
 
       const [el3, binding3] = createHookArguments()
       directive.bind(el3, binding3)
       jest.runOnlyPendingTimers()
-      expect(el3[HANDLERS_PROPERTY].length).toEqual(1)
+      expect(el3[HANDLERS_PROPERTY].length).toEqual(2)
 
       const els = [el1, el2, el3]
 
@@ -124,6 +156,17 @@ describe('v-click-outside -> directive', () => {
       expect(
         document.documentElement.removeEventListener,
       ).toHaveBeenCalledTimes(3)
+    })
+
+    it('removes event listener attached to window', () => {
+      const directive = createDirective()
+      const [el, bindingValue] = createHookArguments()
+
+      directive.bind(el, bindingValue)
+      jest.runOnlyPendingTimers()
+
+      directive.unbind(el)
+      expect(window.removeEventListener).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -143,6 +186,8 @@ describe('v-click-outside -> directive', () => {
         jest.useFakeTimers()
         document.documentElement.addEventListener = jest.fn()
         document.documentElement.removeEventListener = jest.fn()
+        window.addEventListener = jest.fn()
+        window.removeEventListener = jest.fn()
       })
 
       it('updates isActive binding value from true to true', () => {
@@ -152,22 +197,25 @@ describe('v-click-outside -> directive', () => {
         directive.bind(el, binding)
         jest.runOnlyPendingTimers()
 
-        expect(el[HANDLERS_PROPERTY].length).toEqual(1)
+        expect(el[HANDLERS_PROPERTY].length).toEqual(2)
         expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
           1,
         )
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
 
         binding.oldValue = binding.value
         directive.update(el, binding)
         jest.runOnlyPendingTimers()
 
-        expect(el[HANDLERS_PROPERTY].length).toEqual(1)
+        expect(el[HANDLERS_PROPERTY].length).toEqual(2)
         expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
           1,
         )
         expect(
           document.documentElement.removeEventListener,
         ).toHaveBeenCalledTimes(0)
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(0)
 
         const [, newBinding] = createHookArguments(undefined, {
           value: { events: ['click'] },
@@ -176,13 +224,15 @@ describe('v-click-outside -> directive', () => {
         directive.update(el, newBinding)
         jest.runOnlyPendingTimers()
 
-        expect(el[HANDLERS_PROPERTY].length).toEqual(1)
+        expect(el[HANDLERS_PROPERTY].length).toEqual(2)
         expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
           2,
         )
         expect(
           document.documentElement.removeEventListener,
         ).toHaveBeenCalledTimes(binding.value.events.length)
+        expect(window.addEventListener).toHaveBeenCalledTimes(2)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
       })
 
       it('updates is active binding value from true to false', () => {
@@ -192,10 +242,11 @@ describe('v-click-outside -> directive', () => {
         directive.bind(el, binding)
         jest.runOnlyPendingTimers()
 
-        expect(el[HANDLERS_PROPERTY].length).toEqual(1)
+        expect(el[HANDLERS_PROPERTY].length).toEqual(2)
         expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
           1,
         )
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
 
         binding.value.isActive = false
         directive.update(el, binding)
@@ -208,6 +259,8 @@ describe('v-click-outside -> directive', () => {
         expect(
           document.documentElement.removeEventListener,
         ).toHaveBeenCalledTimes(1)
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
       })
 
       it('updates is active binding value from false to true', () => {
@@ -226,19 +279,25 @@ describe('v-click-outside -> directive', () => {
         expect(
           document.documentElement.removeEventListener,
         ).toHaveBeenCalledTimes(0)
+        expect(window.addEventListener).toHaveBeenCalledTimes(0)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(0)
 
         binding.oldValue = { ...binding.value }
         binding.value.isActive = true
         directive.update(el, binding)
         jest.runOnlyPendingTimers()
+        jest.runOnlyPendingTimers()
 
-        expect(el[HANDLERS_PROPERTY].length).toEqual(1)
+        expect(el[HANDLERS_PROPERTY].length).toEqual(2)
         expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
           1,
         )
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
         expect(
           document.documentElement.removeEventListener,
         ).toHaveBeenCalledTimes(0)
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(0)
 
         const [, newBinding] = createHookArguments(undefined, {
           value: { events: ['click'] },
@@ -247,13 +306,15 @@ describe('v-click-outside -> directive', () => {
         directive.update(el, newBinding)
         jest.runOnlyPendingTimers()
 
-        expect(el[HANDLERS_PROPERTY].length).toEqual(1)
+        expect(el[HANDLERS_PROPERTY].length).toEqual(2)
         expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
           2,
         )
         expect(
           document.documentElement.removeEventListener,
         ).toHaveBeenCalledTimes(binding.value.events.length)
+        expect(window.addEventListener).toHaveBeenCalledTimes(2)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
       })
 
       it('updates is active binding value from false to false', () => {
@@ -269,6 +330,8 @@ describe('v-click-outside -> directive', () => {
         expect(document.documentElement.addEventListener).toHaveBeenCalledTimes(
           0,
         )
+        expect(window.addEventListener).toHaveBeenCalledTimes(0)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(0)
 
         directive.update(el, binding)
         jest.runOnlyPendingTimers()
@@ -280,6 +343,57 @@ describe('v-click-outside -> directive', () => {
         expect(
           document.documentElement.removeEventListener,
         ).toHaveBeenCalledTimes(0)
+        expect(window.addEventListener).toHaveBeenCalledTimes(0)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(0)
+      })
+    })
+
+    describe('updates "detectIframe" binding value', () => {
+      beforeEach(() => {
+        jest.useFakeTimers()
+        window.addEventListener = jest.fn()
+        window.removeEventListener = jest.fn()
+      })
+
+      it('works', () => {
+        const directive = createDirective()
+        const [el, binding] = createHookArguments()
+
+        directive.bind(el, binding)
+        jest.runOnlyPendingTimers()
+
+        // starts true by default
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(0)
+
+        // TRUE TO FALSE
+        binding.oldValue = { ...binding.value }
+        binding.value.detectIframe = false
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        // Same count
+        expect(window.addEventListener).toHaveBeenCalledTimes(1)
+        // Event remove
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+
+        // FALSE TO TRUE
+        binding.oldValue = { ...binding.value }
+        binding.value.detectIframe = true
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(window.addEventListener).toHaveBeenCalledTimes(2)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+
+        // TRUE TO TRUE
+        binding.oldValue = { ...binding.value }
+        binding.value.detectIframe = true
+        directive.update(el, binding)
+        jest.runOnlyPendingTimers()
+
+        expect(window.addEventListener).toHaveBeenCalledTimes(2)
+        expect(window.removeEventListener).toHaveBeenCalledTimes(1)
       })
     })
   })

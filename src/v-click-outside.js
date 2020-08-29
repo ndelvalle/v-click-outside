@@ -20,7 +20,25 @@ function processDirectiveArguments(bindingValue) {
     middleware: bindingValue.middleware || ((item) => item),
     events: bindingValue.events || EVENTS,
     isActive: !(bindingValue.isActive === false),
+    detectIframe: !(bindingValue.detectIframe === false),
   }
+}
+
+function execHandler({ event, handler, middleware }) {
+  if (middleware(event)) {
+    handler(event)
+  }
+}
+
+function onFauxIframeClick({ event, handler, middleware }) {
+  // Note: on firefox clicking on iframe triggers blur, but only on
+  //       next event loop it becomes document.activeElement
+  // https://stackoverflow.com/q/2381336#comment61192398_23231136
+  setTimeout(() => {
+    if (document.activeElement.tagName === 'IFRAME') {
+      execHandler({ event, handler, middleware })
+    }
+  }, 0)
 }
 
 function onEvent({ el, event, handler, middleware }) {
@@ -37,40 +55,53 @@ function onEvent({ el, event, handler, middleware }) {
     return
   }
 
-  if (middleware(event)) {
-    handler(event)
-  }
+  execHandler({ event, handler, middleware })
 }
 
 function bind(el, { value }) {
-  const { events, handler, middleware, isActive } = processDirectiveArguments(
-    value,
-  )
+  const {
+    events,
+    handler,
+    middleware,
+    isActive,
+    detectIframe,
+  } = processDirectiveArguments(value)
   if (!isActive) {
     return
   }
 
   el[HANDLERS_PROPERTY] = events.map((eventName) => ({
     event: eventName,
+    srcTarget: document.documentElement,
     handler: (event) => onEvent({ event, el, handler, middleware }),
   }))
 
-  el[HANDLERS_PROPERTY].forEach(({ event, handler }) =>
+  if (detectIframe) {
+    const detectIframeEvent = {
+      event: 'blur',
+      srcTarget: window,
+      handler: (event) => onFauxIframeClick({ event, handler, middleware }),
+    }
+
+    el[HANDLERS_PROPERTY] = [...el[HANDLERS_PROPERTY], detectIframeEvent]
+  }
+
+  el[HANDLERS_PROPERTY].forEach(({ event, srcTarget, handler }) =>
     setTimeout(() => {
       // Note: More info about this implementation can be found here:
       //       https://github.com/ndelvalle/v-click-outside/issues/137
       if (!el[HANDLERS_PROPERTY]) {
         return
       }
-      document.documentElement.addEventListener(event, handler, false)
+      srcTarget.addEventListener(event, handler, false)
     }, 0),
   )
 }
 
 function unbind(el) {
   const handlers = el[HANDLERS_PROPERTY] || []
-  handlers.forEach(({ event, handler }) =>
-    document.documentElement.removeEventListener(event, handler, false),
+  handlers.forEach(({ event, srcTarget, handler }) =>
+    srcTarget.removeEventListener(event, handler, false),
   )
   delete el[HANDLERS_PROPERTY]
 }
