@@ -7,7 +7,8 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5ca72a2dd2044278918b45ea1eba122e)](https://www.codacy.com/app/ndelvalle/v-click-outside?utm_source=github.com&utm_medium=referral&utm_content=ndelvalle/v-click-outside&utm_campaign=Badge_Grade)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-green)](https://github.com/prettier/prettier)
 
-Vue directive to react on clicks outside an element without stopping the event propagation. Great for closing dialogues, menus among other things.
+Vue directive to react on clicks outside an element without stopping the event propagation.
+Great for closing dialogues and menus among other things.
 
 ## Install
 
@@ -39,7 +40,7 @@ Vue.use(vClickOutside)
         // Note: The default value is true, but in case you want to activate / deactivate
         //       this directive dynamically use this attribute.
         isActive: true,
-        // Note: The default value is true. See detecting "Detecting Iframe Clicks" section
+        // Note: The default value is true. See "Detecting Iframe Clicks" section
         //       to understand why this behaviour is behind a flag.
         detectIFrame: true
       }
@@ -145,17 +146,11 @@ export default {
 
 See [#220](https://github.com/ndelvalle/v-click-outside/issues/220) for details or [check-out this demo](https://codesandbox.io/s/v-click-outside-programatic-usage-o9drq)
 
+
 ## Example
 
 [![Edit v-click-outside](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/zx7mx8y1ol?module=%2Fsrc%2Fcomponents%2FHelloWorld.vue)
 
-## Migrate from version 1
-
-The `notouch` modifier is no longer supported, same functionality can be achieved using a middleware function
-
-## Migrate from version 2
-
-The HTML `el` is not sent in the handler function argument any more. Review [this issue](https://github.com/ndelvalle/v-click-outside/issues/137) for more details.
 
 ## Detecting Iframe Clicks
 
@@ -169,6 +164,15 @@ Clicks on iframes moves `focus` to its contents’ `window` but don't `bubble` u
 
 Because of these reasons, the detection mechansim is behind the `detectIframe` flag that you can optionally set to `false` if you find it conflicting with your use-case.
 Any improvements or suggestions to this are welcomed.
+
+
+## Migrate from version 1
+
+The `notouch` modifier is no longer supported, same functionality can be achieved using a middleware function
+
+## Migrate from version 2
+
+The HTML `el` is not sent in the handler function argument any more. Review [this issue](https://github.com/ndelvalle/v-click-outside/issues/137) for more details.
 
 ## License
 

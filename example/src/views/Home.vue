@@ -3,15 +3,19 @@
     <img alt="Vue logo" src="../assets/logo.png" />
     <div class="hello">
       <h1>Welcome to v-click-outside example</h1>
-      <div class="ffefd5-box" v-click-outside="ffefd5">
-        <p>Click Outside #ffefd5 box</p>
+
+      <div class="yellow-box" v-click-outside="onYellowClick">
+        <p>Click Outside Yellow box</p>
       </div>
-      <div class="c13f10-box" v-click-outside="config">
-        <p>Click Outside #c13f10 box</p>
+
+      <div class="red-box" v-click-outside="config">
+        <p>Click Outside Red box</p>
       </div>
+
       <div class="lime-box" ref="limeEl">
-        <p>Click Outside #lime box</p>
+        <p>Click Outside Lime box</p>
       </div>
+
       <iframe class="iframe" src="/about" width="100%" />
     </div>
   </div>
@@ -28,15 +32,15 @@ export default {
     return {
       foo: false,
       config: {
-        handler: this.c13f10,
-        middleware: this.middleware,
+        handler: this.onRedClick,
+        middleware: this.onRedClickMiddleware,
         events: ['click'],
       },
     }
   },
 
   mounted() {
-    bind(this.$refs.limeEl, { value: this.lime })
+    bind(this.$refs.limeEl, { value: this.onLimeClick })
   },
 
   beforeDestroy() {
@@ -44,33 +48,35 @@ export default {
   },
 
   methods: {
-    ffefd5(ev) {
-      console.log('Clicked outside ffefd5!', ev)
+    onYellowClick(ev) {
+      console.log('Clicked outside Yellow!', ev)
     },
 
-    c13f10(ev) {
-      console.log('Clicked outside c13f10!', ev)
+    onRedClick(ev) {
+      console.log('Clicked outside Red!', ev)
     },
-    middleware(ev) {
-      console.log('Middleware!', ev)
+
+    onRedClickMiddleware(ev) {
+      console.log('Middleware from click outside Red!', ev)
       return true
     },
-    lime(ev) {
-      console.log('Clicked outside lime!', ev)
+
+    onLimeClick(ev) {
+      console.log('Clicked outside Lime!', ev)
     },
   },
 }
 </script>
 
 <style>
-.ffefd5-box {
-  background-color: #ffefd5;
+.yellow-box {
+  background-color: yellow;
   height: 50px;
   text-align: center;
 }
 
-.c13f10-box {
-  background-color: #c13f10;
+.red-box {
+  background-color: red;
   height: 50px;
 }
 
