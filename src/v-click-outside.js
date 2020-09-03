@@ -74,7 +74,7 @@ function bind(el, { value }) {
   el[HANDLERS_PROPERTY] = events.map((eventName) => ({
     event: eventName,
     srcTarget: document.documentElement,
-    handler: (event) => onEvent({ event, el, handler, middleware }),
+    handler: (event) => onEvent({ el, event, handler, middleware }),
   }))
 
   if (detectIframe) {
