@@ -16,6 +16,11 @@
         <p>Click Outside Lime box</p>
       </div>
 
+      <div class="blue-box" v-click-outside="onBlueClick">
+        <p>Click Outside blue box</p>
+        <iframe tabindex="1" class="iframe-button-example" src="/about" />
+      </div>
+
       <iframe class="iframe" src="/about" width="100%" />
     </div>
   </div>
@@ -64,6 +69,10 @@ export default {
     onLimeClick(ev) {
       console.log('Clicked outside Lime!', ev)
     },
+
+    onBlueClick(ev) {
+      console.log(`Clicked outside Blue!`, ev)
+    },
   },
 }
 </script>
@@ -83,6 +92,19 @@ export default {
 .lime-box {
   background-color: lime;
   height: 50px;
+}
+
+.blue-box {
+  background-color: blue;
+  color: white;
+}
+
+.iframe-button-example {
+  border: 2px solid white;
+  border-radius: 8px;
+  width: 200px;
+  height: 50px;
+  overflow: hidden;
 }
 
 .iframe {
