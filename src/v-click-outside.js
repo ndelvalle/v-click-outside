@@ -30,12 +30,13 @@ function execHandler({ event, handler, middleware }) {
   }
 }
 
-function onFauxIframeClick({ event, handler, middleware }) {
+function onFauxIframeClick({ el, event, handler, middleware }) {
   // Note: on firefox clicking on iframe triggers blur, but only on
   //       next event loop it becomes document.activeElement
   // https://stackoverflow.com/q/2381336#comment61192398_23231136
   setTimeout(() => {
-    if (document.activeElement.tagName === 'IFRAME') {
+    const { activeElement } = document
+    if (activeElement.tagName === 'IFRAME' && !el.contains(activeElement)) {
       execHandler({ event, handler, middleware })
     }
   }, 0)
@@ -73,14 +74,14 @@ function bind(el, { value }) {
   el[HANDLERS_PROPERTY] = events.map((eventName) => ({
     event: eventName,
     srcTarget: document.documentElement,
-    handler: (event) => onEvent({ event, el, handler, middleware }),
+    handler: (event) => onEvent({ el, event, handler, middleware }),
   }))
 
   if (detectIframe) {
     const detectIframeEvent = {
       event: 'blur',
       srcTarget: window,
-      handler: (event) => onFauxIframeClick({ event, handler, middleware }),
+      handler: (event) => onFauxIframeClick({ el, event, handler, middleware }),
     }
 
     el[HANDLERS_PROPERTY] = [...el[HANDLERS_PROPERTY], detectIframeEvent]
