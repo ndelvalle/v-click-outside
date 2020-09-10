@@ -44,7 +44,7 @@
     "microbundle": "^0.12.3",
     "np": "^6.5.0",
     "prettier": "^2.1.1",
-    "pretty-quick": "^2.0.0"
+    "pretty-quick": "^3.0.1"
   },
   "jest": {
     "collectCoverage": true,
