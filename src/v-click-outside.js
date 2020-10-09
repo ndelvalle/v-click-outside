@@ -21,6 +21,7 @@ function processDirectiveArguments(bindingValue) {
     events: bindingValue.events || EVENTS,
     isActive: !(bindingValue.isActive === false),
     detectIframe: !(bindingValue.detectIframe === false),
+    capture: !!bindingValue.capture,
   }
 }
 
@@ -70,6 +71,7 @@ function bind(el, { value }) {
     middleware,
     isActive,
     detectIframe,
+    capture,
   } = processDirectiveArguments(value)
   if (!isActive) {
     return
@@ -86,6 +88,7 @@ function bind(el, { value }) {
       event: 'blur',
       srcTarget: window,
       handler: (event) => onFauxIframeClick({ el, event, handler, middleware }),
+      capture,
     }
 
     el[HANDLERS_PROPERTY] = [...el[HANDLERS_PROPERTY], detectIframeEvent]
@@ -98,15 +101,15 @@ function bind(el, { value }) {
       if (!el[HANDLERS_PROPERTY]) {
         return
       }
-      srcTarget.addEventListener(event, handler, false)
+      srcTarget.addEventListener(event, handler, capture)
     }, 0),
   )
 }
 
 function unbind(el) {
   const handlers = el[HANDLERS_PROPERTY] || []
-  handlers.forEach(({ event, srcTarget, handler }) =>
-    srcTarget.removeEventListener(event, handler, false),
+  handlers.forEach(({ event, srcTarget, handler, capture }) =>
+    srcTarget.removeEventListener(event, handler, capture),
   )
   delete el[HANDLERS_PROPERTY]
 }
