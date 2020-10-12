@@ -81,6 +81,7 @@ function bind(el, { value }) {
     event: eventName,
     srcTarget: document.documentElement,
     handler: (event) => onEvent({ el, event, handler, middleware }),
+    capture,
   }))
 
   if (detectIframe) {

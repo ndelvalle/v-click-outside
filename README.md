@@ -42,7 +42,10 @@ Vue.use(vClickOutside)
         isActive: true,
         // Note: The default value is true. See "Detecting Iframe Clicks" section
         //       to understand why this behaviour is behind a flag.
-        detectIFrame: true
+        detectIFrame: true,
+        // Note: The default value is false. Sets the capture option for EventTarget addEventListener method.
+        //       Could be useful if some event's handler calls stopPropagation method preventing event bubbling.
+        capture: false
       }
     },
     methods: {
