@@ -116,6 +116,23 @@ describe('v-click-outside -> directive', () => {
 
       expect(window.addEventListener).toHaveBeenCalledTimes(1)
     })
+
+    it('checks that event listener is set correctly with capture option passed', () => {
+      const directive = createDirective()
+      const [el, binding] = createHookArguments()
+      binding.value.capture = true
+
+      directive.bind(el, binding)
+      jest.runOnlyPendingTimers()
+
+      el[HANDLERS_PROPERTY].forEach(({ event, srcTarget, handler }) =>
+        expect(srcTarget.addEventListener).toHaveBeenCalledWith(
+          event,
+          handler,
+          true,
+        ),
+      )
+    })
   })
 
   describe('unbind', () => {
@@ -167,6 +184,26 @@ describe('v-click-outside -> directive', () => {
 
       directive.unbind(el)
       expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+    })
+
+    it('removes event listeners with capture option passed', () => {
+      const directive = createDirective()
+
+      const [el, binding] = createHookArguments()
+      binding.value.capture = true
+      directive.bind(el, binding)
+      jest.runOnlyPendingTimers()
+
+      const elSettings = el[HANDLERS_PROPERTY]
+      directive.unbind(el)
+
+      elSettings.forEach(({ event, srcTarget, handler }) =>
+        expect(srcTarget.removeEventListener).toHaveBeenCalledWith(
+          event,
+          handler,
+          true,
+        ),
+      )
     })
   })
 
