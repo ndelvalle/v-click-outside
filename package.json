@@ -37,7 +37,7 @@
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "husky": "^4.2.5",
+    "husky": "^6.0.0",
     "jest": "^26.4.2",
     "jest-cli": "^26.4.2",
     "lodash": "^4.17.20",
