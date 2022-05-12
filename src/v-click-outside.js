@@ -52,7 +52,7 @@ function onEvent({ el, event, handler, middleware }) {
   //       https://developer.mozilla.org/en-US/docs/Web/API/Event/composedPath
   //       In the meanwhile, we are using el.contains for those browsers, not
   //       the ideal solution, but using IE or EDGE is not ideal either.
-  const path = event.path || (event.composedPath && event.composedPath())
+  const path = event.composedPath()
   const isClickOutside = path
     ? path.indexOf(el) < 0
     : !el.contains(event.target)
