@@ -95,7 +95,7 @@ import vClickOutside from 'v-click-outside'
 </template>
 ```
 
-Or use directive‘s hooks programatically
+Or use directive‘s hooks programmatically
 
 ```vue
 <script>
