@@ -41,7 +41,7 @@
     "jest": "^26.4.2",
     "jest-cli": "^26.4.2",
     "lodash": "^4.17.20",
-    "microbundle": "^0.14.2",
+    "microbundle": "^0.15.0",
     "np": "^7.2.0",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.0"
