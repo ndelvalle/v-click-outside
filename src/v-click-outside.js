@@ -1,10 +1,6 @@
 const HANDLERS_PROPERTY = '__v-click-outside'
 const HAS_WINDOWS = typeof window !== 'undefined'
-const HAS_NAVIGATOR = typeof navigator !== 'undefined'
-const IS_TOUCH =
-  HAS_WINDOWS &&
-  ('ontouchstart' in window ||
-    (HAS_NAVIGATOR && navigator.msMaxTouchPoints > 0))
+const IS_TOUCH = HAS_WINDOWS && 'ontouchstart' in window
 const EVENTS = IS_TOUCH ? ['touchstart'] : ['click']
 
 function processDirectiveArguments(bindingValue) {
