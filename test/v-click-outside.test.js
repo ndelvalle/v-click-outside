@@ -26,27 +26,7 @@ function createHookArguments(el = document.createElement('div'), binding = {}) {
   ]
 }
 
-describe('v-click-outside -> plugin', () => {
-  it('install the directive into the vue instance', () => {
-    const vue = {
-      directive: jest.fn(),
-    }
-    clickOutside.install(vue)
-    expect(vue.directive).toHaveBeenCalledWith(
-      'click-outside',
-      clickOutside.directive,
-    )
-    expect(vue.directive).toHaveBeenCalledTimes(1)
-  })
-})
-
 describe('v-click-outside -> directive', () => {
-  it('it has bind, update and unbind methods available', () => {
-    expect(typeof clickOutside.directive.bind).toBe('function')
-    expect(typeof clickOutside.directive.update).toBe('function')
-    expect(typeof clickOutside.directive.unbind).toBe('function')
-  })
-
   describe('bind', () => {
     beforeEach(() => {
       document.documentElement.addEventListener = jest.fn()
