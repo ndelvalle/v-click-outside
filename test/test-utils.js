@@ -1,4 +1,4 @@
-const { isVue3 } = require('vue-demi')
+const { isVue3 } = require('../src/utils')
 
 const lifecycleInstanceMethods = {
   unmount: isVue3 ? 'unmount' : 'destroy',

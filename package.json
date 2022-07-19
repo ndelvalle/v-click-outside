@@ -18,8 +18,8 @@
     "format:staged": "pretty-quick --staged",
     "release": "np",
     "version": "npm run build",
-    "use-vue:2": "node scripts/swap-vue.js 2 && vue-demi-switch 2",
-    "use-vue:3": "node scripts/swap-vue.js 3 && vue-demi-switch 3"
+    "use-vue:2": "node scripts/swap-vue.js 2",
+    "use-vue:3": "node scripts/swap-vue.js 3"
   },
   "repository": {
     "type": "git",
@@ -68,16 +68,7 @@
   "engines": {
     "node": ">=6"
   },
-  "dependencies": {
-    "vue-demi": "^0.13.2"
-  },
   "peerDependencies": {
-    "@vue/composition-api": "^1.0.0",
     "vue": "^2.6.0 || >=3.2.0"
-  },
-  "peerDependenciesMeta": {
-    "@vue/composition-api": {
-      "optional": true
-    }
   }
 }
