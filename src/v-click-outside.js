@@ -1,3 +1,5 @@
+import { directiveHooks } from './utils'
+
 const HANDLERS_PROPERTY = '__v-click-outside'
 const HAS_WINDOWS = typeof window !== 'undefined'
 const HAS_NAVIGATOR = typeof navigator !== 'undefined'
@@ -124,9 +126,9 @@ function update(el, { value, oldValue }) {
 }
 
 const directive = {
-  bind,
-  update,
-  unbind,
+  [directiveHooks.beforeMount]: bind,
+  [directiveHooks.updated]: update,
+  [directiveHooks.unmounted]: unbind,
 }
 
 export default HAS_WINDOWS ? directive : {}

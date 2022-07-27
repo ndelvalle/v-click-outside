@@ -6,8 +6,10 @@
   "umd:main": "dist/v-click-outside.umd.js",
   "source": "src/index.js",
   "scripts": {
-    "test": "jest --coverage",
-    "test:watch": "jest --colors --watch",
+    "test": "npm run use-vue:2 && jest --coverage --testPathIgnorePatterns \".(isomorphic.test.js)$\"",
+    "test:isomorphic": "npm run use-vue:2 && jest --testPathPattern \".(isomorphic.test.js)$\"",
+    "test:isomorphic3": "npm run use-vue:3 && jest --testPathPattern \".(isomorphic.test.js)$\"",
+    "test:watch": "jest --colors --watch ",
     "coverage": "open coverage/lcov-report/index.html",
     "build": "microbundle --entry src/index.js --target browser --format umd --name v-click-outside",
     "lint": "eslint . --ext .js",
@@ -15,7 +17,9 @@
     "format:changed": "pretty-quick",
     "format:staged": "pretty-quick --staged",
     "release": "np",
-    "version": "npm run build"
+    "version": "npm run build",
+    "use-vue:2": "node scripts/swap-vue.js 2",
+    "use-vue:3": "node scripts/swap-vue.js 3"
   },
   "repository": {
     "type": "git",
@@ -29,6 +33,9 @@
   "homepage": "https://github.com/ndelvalle/v-click-outside#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.11.0",
+    "@vue/composition-api": "^1.7.0",
+    "@vue/test-utils": "^1.3.0",
+    "@vue/test-utils-vue3": "npm:@vue/test-utils@^2.0.2",
     "babel-core": "^6.26.3",
     "babel-jest": "^26.3.0",
     "babel-preset-es2015": "^6.24.1",
@@ -44,7 +51,10 @@
     "microbundle": "^0.15.0",
     "np": "^7.2.0",
     "prettier": "^2.1.1",
-    "pretty-quick": "^3.0.0"
+    "pretty-quick": "^3.0.0",
+    "vue": "^2.6.14",
+    "vue-template-compiler": "^2.6.14",
+    "vue3": "npm:vue@^3.2.37"
   },
   "jest": {
     "collectCoverage": true,
@@ -57,5 +67,8 @@
   },
   "engines": {
     "node": ">=6"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.0 || >=3.2.0"
   }
 }
