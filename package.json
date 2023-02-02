@@ -52,7 +52,7 @@
     "np": "^7.2.0",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.0",
-    "vue": "^2.6.14",
+    "vue": "^3.2.47",
     "vue-template-compiler": "^2.6.14",
     "vue3": "npm:vue@^3.2.37"
   },
